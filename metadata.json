@@ -1,0 +1,6 @@
+{
+  "name": "ENVELOPE",
+  "description": "A cosmic minimalist magic performance app for digital envelope predictions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
