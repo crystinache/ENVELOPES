@@ -73,8 +73,8 @@ export function Knife({ size = 24, strokeWidth = 1.5, color = 'currentColor', cl
     >
       {/* Knife Handle */}
       <path d="M9.5 14.5L3.5 20.5a1.5 1.5 0 1 1-2-2l6-6" />
-      {/* Knife Blade */}
-      <path d="M10 14h1.5l11.5-11.5a0.7 0.7 0 0 0 0-1l-1-1a0.7 0.7 0 0 0-1 0l-11.5 11.5C7.2 11.8 8.2 13.2 10 14z" />
+      {/* Restaurant Table Knife Blade (Straight spine, rounded blunt tip) */}
+      <path d="M 10 14 L 18 6 Q 21.5 3.5, 21.5 7 Q 21.5 9, 19 10 L 11.5 12.5 Z" />
     </svg>
   );
 }

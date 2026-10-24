@@ -104,14 +104,18 @@ export default function Performance({ state, onReset }: PerformanceProps) {
       const rem2 = allRemaining[1]; // larger
 
       let n3: number, n4: number;
-      if (dx < -5) {
-        // Swipe Left -> smaller remaining is 3rd number
+      if (dx > 0) {
+        // Swipe Right -> larger remaining is 3rd number (più alto)
+        n3 = rem2;
+        n4 = rem1;
+      } else if (dx < 0) {
+        // Swipe Left -> smaller remaining is 3rd number (più basso)
         n3 = rem1;
         n4 = rem2;
       } else {
-        // Swipe Right / Neutral -> larger remaining is 3rd number
-        n3 = rem2;
-        n4 = rem1;
+        // Tap / Neutral -> smaller remaining
+        n3 = rem1;
+        n4 = rem2;
       }
 
       setCapturedSequence([q, n2, n3, n4]);
