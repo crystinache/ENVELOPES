@@ -162,18 +162,19 @@ export function BottleWine({ size = 24, strokeWidth = 1.5, color = 'currentColor
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
+      overflow="visible"
       className={className}
       {...props}
     >
       {/* Cap / Rim */}
-      <path d="M10 1.5h4" />
-      {/* Neck */}
-      <path d="M10 1.5v6.5" />
-      <path d="M14 1.5v6.5" />
-      {/* Shoulder & Tall Body */}
-      <path d="M10 8c-2.5 1-3.5 2-3.5 4.5v9.5c0 .8.7 1.5 1.5 1.5h8c.8 0 1.5-.7 1.5-1.5v-9.5c0-2.5-1-3.5-3.5-4.5Z" />
-      {/* Beer Label */}
-      <rect x="9" y="13" width="6" height="7" rx="1" strokeWidth={Number(strokeWidth) * 0.8} />
+      <path d="M10 0.8h4" />
+      {/* Neck (Unchanged height 6.5) */}
+      <path d="M10 0.8v6.5" />
+      <path d="M14 0.8v6.5" />
+      {/* Shoulder & Body (+30% longer straight cylinder) */}
+      <path d="M10 7.3c-2.5 1-3.5 2-3.5 4.5v12.4c0 .8.7 1.5 1.5 1.5h8c.8 0 1.5-.7 1.5-1.5v-12.4c0-2.5-1-3.5-3.5-4.5Z" />
+      {/* Beer / Wine Label (+30% longer) */}
+      <rect x="9" y="13.2" width="6" height="9" rx="1" strokeWidth={Number(strokeWidth) * 0.8} />
     </svg>
   );
 }
