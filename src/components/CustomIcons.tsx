@@ -68,13 +68,16 @@ export function Knife({ size = 24, strokeWidth = 1.5, color = 'currentColor', cl
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
+      overflow="visible"
       className={className}
       {...props}
     >
-      {/* Knife Handle */}
-      <path d="M9.5 14.5L3.5 20.5a1.5 1.5 0 1 1-2-2l6-6" />
-      {/* Knife Blade */}
-      <path d="M10 14h1.5l11.5-11.5a0.7 0.7 0 0 0 0-1l-1-1a0.7 0.7 0 0 0-1 0l-11.5 11.5C7.2 11.8 8.2 13.2 10 14z" />
+      <g transform="translate(12, 12) scale(1.2) translate(-12, -12)">
+        {/* Restaurant Knife: uniform blade width for 90% of length, tapering to a pointed tip at the end */}
+        <path d="M8.6 12.6L20.5 2C20.6 3.8 19.4 5.8 18.5 7.1L10.8 14.8L10.2 14.2L3.8 20.8a1.2 1.2 0 1 1-1.6-1.6L8.6 12.6Z" />
+        {/* Bolster collar */}
+        <line x1="8.6" y1="12.6" x2="10.8" y2="14.8" />
+      </g>
     </svg>
   );
 }

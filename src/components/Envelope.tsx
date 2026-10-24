@@ -40,9 +40,11 @@ interface EnvelopeProps {
   object?: PerformanceObject;
   isOpen: boolean;
   onDoubleTap: () => void;
+  onPointerDown?: (e: React.PointerEvent) => void;
+  onPointerUp?: (e: React.PointerEvent) => void;
 }
 
-export default function Envelope({ color, object, isOpen, onDoubleTap }: EnvelopeProps) {
+export default function Envelope({ color, object, isOpen, onDoubleTap, onPointerDown, onPointerUp }: EnvelopeProps) {
   const Icon = object ? ICON_COMPONENTS[object.iconName] : null;
   const isPersonal = object?.id === 'personal';
 
@@ -50,6 +52,8 @@ export default function Envelope({ color, object, isOpen, onDoubleTap }: Envelop
     <div 
       className="relative w-full h-full flex items-center justify-center select-none"
       onDoubleClick={onDoubleTap}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
     >
       <div className="relative w-[75%] h-[70%] max-w-[450px]">
         
