@@ -104,12 +104,12 @@ export default function Performance({ state, onReset }: PerformanceProps) {
       const rem2 = allRemaining[1]; // larger
 
       let n3: number, n4: number;
-      if (dx < 0) {
+      if (dx < -5) {
         // Swipe Left -> smaller remaining is 3rd number
         n3 = rem1;
         n4 = rem2;
       } else {
-        // Swipe Right -> larger remaining is 3rd number
+        // Swipe Right / Neutral -> larger remaining is 3rd number
         n3 = rem2;
         n4 = rem1;
       }
@@ -169,7 +169,7 @@ export default function Performance({ state, onReset }: PerformanceProps) {
 
   return (
     <div 
-      className="fixed inset-0 bg-black overflow-hidden flex items-center justify-center touch-none"
+      className="fixed inset-0 bg-black overflow-hidden flex items-center justify-center touch-none select-none"
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerMove={() => { if (longPressTimer.current) clearTimeout(longPressTimer.current); }}
@@ -197,6 +197,7 @@ export default function Performance({ state, onReset }: PerformanceProps) {
           })}
         </div>
       </motion.div>
+
     </div>
   );
 }
