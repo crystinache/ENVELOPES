@@ -30,43 +30,47 @@ export default function Performance({ state, onReset }: PerformanceProps) {
 
   // Secret sequence capture
   const [capturedSequence, setCapturedSequence] = useState<number[]>([]); 
-  const touchStartPos = useRef<{ x: number, y: number, q: number, time: number } | null>(null);
+  const touchStartPos = useRef<{ x: number, y: number, q: number, n2: number, time: number } | null>(null);
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
-
-  const getQuadrant = (x: number, y: number) => {
-    const { width: w, height: h } = dimensions;
-    if (x < w / 2) return y < h / 2 ? 1 : 3;
-    return y < h / 2 ? 2 : 4;
-  };
 
   const handlePointerDown = (e: React.PointerEvent) => {
     const x = e.clientX;
     const y = e.clientY;
-    const q = getQuadrant(x, y);
-    touchStartPos.current = { x, y, q, time: Date.now() };
+    const { width: w, height: h } = dimensions;
+    const halfW = w / 2;
+    const halfH = h / 2;
+    const qX = x < halfW ? 0 : 1;
+    const qY = y < halfH ? 0 : 1;
+    const q = qY === 0 ? (qX === 0 ? 1 : 2) : (qX === 0 ? 3 : 4);
+
+    const localY = y - (qY * halfH);
+    const third = halfH / 3;
+    let subIndex = 0;
+    if (localY < third) subIndex = 0;
+    else if (localY < 2 * third) subIndex = 1;
+    else subIndex = 2;
+
+    const remaining = [1, 2, 3, 4].filter(n => n !== q);
+    const n2 = remaining[subIndex];
+
+    touchStartPos.current = { x, y, q, n2, time: Date.now() };
 
     // Long press for resetting (1.2 seconds)
     longPressTimer.current = setTimeout(() => {
       onReset();
     }, 1200);
-
-    // Logic for capturing the 3rd number:
-    // If we have 2 numbers, the start of the second interaction (this touch) is the 3rd number.
-    if (capturedSequence.length === 2) {
-      if (!capturedSequence.includes(q)) {
-        completeSequence([...capturedSequence, q]);
-      }
-    }
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
     if (longPressTimer.current) clearTimeout(longPressTimer.current);
-    // Sequence capture for swipe is handled in handlePanEnd for better info.offset support
-  };
 
-  const completeSequence = (seq: number[]) => {
-    const missing = [1, 2, 3, 4].find(n => !seq.includes(n)) || 4;
-    setCapturedSequence([...seq, missing]);
+    // If tapped without panning/swiping and sequence not captured yet, capture with default (Swipe Left / smaller remaining)
+    if (capturedSequence.length === 0 && touchStartPos.current) {
+      const { q, n2 } = touchStartPos.current;
+      const allRemaining = [1, 2, 3, 4].filter(n => n !== q && n !== n2).sort((a, b) => a - b);
+      setCapturedSequence([q, n2, allRemaining[0], allRemaining[1]]);
+      touchStartPos.current = null;
+    }
   };
 
   const handlePan = (event: any, info: PanInfo) => {
@@ -90,41 +94,27 @@ export default function Performance({ state, onReset }: PerformanceProps) {
   const handlePanEnd = (event: any, info: PanInfo) => {
     if (!scrollDir) return;
 
-    // Sequence Capture Logic for First Swipe:
+    // Sequence Capture Logic for Swipe:
     if (capturedSequence.length === 0 && touchStartPos.current) {
-      const startQ = touchStartPos.current.q;
+      const { q, n2 } = touchStartPos.current;
       const dx = info.offset.x;
-      const dy = info.offset.y;
-      const adx = Math.abs(dx);
-      const ady = Math.abs(dy);
-      let endQ = startQ;
+      
+      const allRemaining = [1, 2, 3, 4].filter(n => n !== q && n !== n2).sort((a, b) => a - b);
+      const rem1 = allRemaining[0]; // smaller
+      const rem2 = allRemaining[1]; // larger
 
-      if (adx > ady) {
-        if (dx > 0) { // Right
-          if (startQ === 1) endQ = 2;
-          else if (startQ === 2) endQ = 3;
-          else if (startQ === 3) endQ = 4;
-          else if (startQ === 4) endQ = 1;
-        } else { // Left
-          if (startQ === 1) endQ = 4;
-          else if (startQ === 2) endQ = 1;
-          else if (startQ === 3) endQ = 2;
-          else if (startQ === 4) endQ = 3;
-        }
+      let n3: number, n4: number;
+      if (dx < 0) {
+        // Swipe Left -> smaller remaining is 3rd number
+        n3 = rem1;
+        n4 = rem2;
       } else {
-        if (dy > 0) { // Down
-          if (startQ === 1) endQ = 3;
-          else if (startQ === 2) endQ = 4;
-          else if (startQ === 3) endQ = 2; 
-          else if (startQ === 4) endQ = 1;
-        } else { // Up
-          if (startQ === 1) endQ = 4;
-          else if (startQ === 2) endQ = 3;
-          else if (startQ === 3) endQ = 1;
-          else if (startQ === 4) endQ = 2;
-        }
+        // Swipe Right -> larger remaining is 3rd number
+        n3 = rem2;
+        n4 = rem1;
       }
-      if (startQ !== endQ) setCapturedSequence([startQ, endQ]);
+
+      setCapturedSequence([q, n2, n3, n4]);
     }
     
     touchStartPos.current = null;
